@@ -14,7 +14,9 @@ use GuzzleHttp\Client,
  * @property-write boolean $index stahovani jen zmenenych souboru
  * @author Attreid <attreid@gmail.com>
  */
-class Downloader extends \Nette\Object {
+class Downloader {
+
+    use \Nette\SmartObject;
 
     /** @var IndexFile */
     private $timestamp;
