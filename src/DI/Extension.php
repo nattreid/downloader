@@ -19,12 +19,6 @@ class Extension extends \Nette\DI\CompilerExtension {
 
         $builder = $this->getContainerBuilder();
 
-        if (!isset($config['path'])) {
-            throw new \Nette\InvalidArgumentException("Missing value 'path' for mailing");
-        }if (!isset($config['class'])) {
-            throw new \Nette\InvalidArgumentException("Missing value 'class' for mailing");
-        }
-
         $builder->addDefinition($this->prefix('downloader.index'))
                 ->setClass('\NAttreid\Downloader\IndexFile')
                 ->setArguments([$config['temp']]);
