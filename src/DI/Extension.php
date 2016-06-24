@@ -25,8 +25,7 @@ class Extension extends \Nette\DI\CompilerExtension {
 
         $builder->addDefinition($this->prefix('downloader.downloader'))
                 ->setImplement('\NAttreid\Downloader\IDownloader')
-                ->setFactory('\NAttreid\Downloader\Downloader')
-                ->setAutowired(TRUE);
+                ->setFactory('\NAttreid\Downloader\Downloader');
     }
 
 }
