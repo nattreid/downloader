@@ -20,12 +20,12 @@ class Extension extends \Nette\DI\CompilerExtension {
         $builder = $this->getContainerBuilder();
 
         $builder->addDefinition($this->prefix('downloader.index'))
-                ->setClass('\NAttreid\Downloader\IndexFile')
+                ->setClass('NAttreid\Downloader\IndexFile')
                 ->setArguments([$config['temp']]);
 
         $builder->addDefinition($this->prefix('downloader.downloader'))
-                ->setImplement('\NAttreid\Downloader\IDownloader')
-                ->setFactory('\NAttreid\Downloader\Downloader');
+                ->setImplement('NAttreid\Downloader\IDownloader')
+                ->setFactory('NAttreid\Downloader\Downloader');
     }
 
 }
