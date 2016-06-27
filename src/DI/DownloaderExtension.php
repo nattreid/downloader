@@ -7,7 +7,7 @@ namespace NAttreid\Downloader\DI;
  *
  * Attreid <attreid@gmail.com>
  */
-class Extension extends \Nette\DI\CompilerExtension {
+class DownloaderExtension extends \Nette\DI\CompilerExtension {
 
     /** @var array */
     private $defaults = [

@@ -3,7 +3,7 @@
 Nastavení v **config.neon**
 ```neon
 extensions:
-    - NAttreid\Downloader\DI\Extension
+    - NAttreid\Downloader\DI\DownloaderExtension
 ```
 
 ## Použití
