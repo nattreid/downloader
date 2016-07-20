@@ -2,6 +2,10 @@
 
 namespace NAttreid\Downloader\DI;
 
+use NAttreid\Downloader\IndexFile,
+    NAttreid\Downloader\IDownloader,
+    NAttreid\Downloader\Downloader;
+
 /**
  * Rozsireni
  *
@@ -20,12 +24,12 @@ class DownloaderExtension extends \Nette\DI\CompilerExtension {
         $builder = $this->getContainerBuilder();
 
         $builder->addDefinition($this->prefix('downloader.index'))
-                ->setClass('NAttreid\Downloader\IndexFile')
+                ->setClass(IndexFile::class)
                 ->setArguments([$config['temp']]);
 
         $builder->addDefinition($this->prefix('downloader.downloader'))
-                ->setImplement('NAttreid\Downloader\IDownloader')
-                ->setFactory('NAttreid\Downloader\Downloader');
+                ->setImplement(IDownloader::class)
+                ->setFactory(Downloader::class);
     }
 
 }
