@@ -32,7 +32,7 @@ class Downloader
 	private $timeout = 300;
 
 	/** @var boolean */
-	private $index = FALSE;
+	private $index = false;
 
 	/** @var array[target => source] */
 	private $pool = [];
@@ -118,7 +118,7 @@ class Downloader
 				$target = $this->pool[$index];
 				$last = $response->getHeader('Last-Modified');
 				if (!empty($last)) {
-					if ($this->timestamp->$target != NULL && $this->timestamp->$target == $last[0]) {
+					if ($this->timestamp->$target != null && $this->timestamp->$target == $last[0]) {
 						return;
 					}
 					$this->timestamp->$target = $last[0];

@@ -37,7 +37,7 @@ class IndexFile
 		if (isset($timestamp[$name])) {
 			return $timestamp[$name];
 		} else {
-			return NULL;
+			return null;
 		}
 	}
 
