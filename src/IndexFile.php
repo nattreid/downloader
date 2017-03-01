@@ -10,9 +10,10 @@ namespace NAttreid\Downloader;
 class IndexFile
 {
 
+	/** @var string */
 	private $file;
 
-	public function __construct($indexFile)
+	public function __construct(string $indexFile)
 	{
 		$this->file = 'nette.safe://' . $indexFile;
 	}
@@ -31,7 +32,7 @@ class IndexFile
 		return $timestamp;
 	}
 
-	public function __get($name)
+	public function __get(string $name)
 	{
 		$timestamp = $this->readFile();
 		if (isset($timestamp[$name])) {
@@ -41,7 +42,7 @@ class IndexFile
 		}
 	}
 
-	public function __set($name, $value)
+	public function __set(string $name, string $value)
 	{
 		$timestamp = $this->readFile();
 		$timestamp[$name] = $value;

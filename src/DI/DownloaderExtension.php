@@ -1,17 +1,20 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace NAttreid\Downloader\DI;
 
 use NAttreid\Downloader\Downloader;
 use NAttreid\Downloader\IDownloader;
 use NAttreid\Downloader\IndexFile;
+use Nette\DI\CompilerExtension;
 
 /**
  * Rozsireni
  *
  * Attreid <attreid@gmail.com>
  */
-class DownloaderExtension extends \Nette\DI\CompilerExtension
+class DownloaderExtension extends CompilerExtension
 {
 
 	/** @var array */
