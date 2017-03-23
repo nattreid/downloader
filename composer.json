@@ -3,7 +3,7 @@
   "description": "Downloader for Nette Framework",
   "type": "library",
   "license": [
-    "Unlicense"
+    "MIT"
   ],
   "authors": [
     {
