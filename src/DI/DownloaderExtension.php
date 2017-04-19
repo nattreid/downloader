@@ -1,13 +1,14 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace NAttreid\Downloader\DI;
 
 use NAttreid\Downloader\Downloader;
-use NAttreid\Downloader\IDownloader;
+use NAttreid\Downloader\IDownloaderFactory;
 use NAttreid\Downloader\IndexFile;
 use Nette\DI\CompilerExtension;
+use Nette\DI\Helpers;
 
 /**
  * Rozsireni
@@ -22,18 +23,19 @@ class DownloaderExtension extends CompilerExtension
 		'temp' => '%tempDir%/index',
 	];
 
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
+		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults, $this->config);
 
-		$builder = $this->getContainerBuilder();
+		$config['temp'] = Helpers::expand($config['temp'], $builder->parameters);
 
 		$builder->addDefinition($this->prefix('downloader.index'))
 			->setClass(IndexFile::class)
 			->setArguments([$config['temp']]);
 
 		$builder->addDefinition($this->prefix('downloader.downloader'))
-			->setImplement(IDownloader::class)
+			->setImplement(IDownloaderFactory::class)
 			->setFactory(Downloader::class);
 	}
 

@@ -1,9 +1,10 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace NAttreid\Downloader;
 
+use DateTime;
 use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
@@ -57,7 +58,7 @@ class Downloader
 	 * Nastavi maximalni pocet soucasne stahovanych souboru
 	 * @param int $concurrency
 	 */
-	protected function setConcurrency(int $concurrency)
+	protected function setConcurrency(int $concurrency): void
 	{
 		$this->concurrency = $concurrency;
 	}
@@ -66,7 +67,7 @@ class Downloader
 	 * Nastavi timeout pro pripojeni k souboru
 	 * @param float $timeout
 	 */
-	protected function setTimeout(float $timeout)
+	protected function setTimeout(float $timeout): void
 	{
 		$this->timeout = $timeout;
 	}
@@ -75,7 +76,7 @@ class Downloader
 	 * Nastavi stahovani jen zmenenych souboru
 	 * @param bool $index
 	 */
-	protected function setIndex(bool $index)
+	protected function setIndex(bool $index): void
 	{
 		$this->index = $index;
 	}
@@ -84,7 +85,7 @@ class Downloader
 	 * Stazeni z url
 	 * @param array $pool pole ve formatu (source => target)
 	 */
-	public function download(array $pool)
+	public function download(array $pool): void
 	{
 		$this->pool = $pool;
 
@@ -98,7 +99,7 @@ class Downloader
 	/**
 	 * Stazeni vsech url
 	 */
-	private function downloadAll()
+	private function downloadAll(): void
 	{
 		foreach ($this->pool as $source => $target) {
 			$this->addRequest($source, $target);
@@ -109,7 +110,7 @@ class Downloader
 	/**
 	 * Stazeni pouze modifikovanych url
 	 */
-	private function downloadModified()
+	private function downloadModified(): void
 	{
 		$request = function () {
 			foreach ($this->pool as $source => $target) {
@@ -118,16 +119,18 @@ class Downloader
 		};
 		$pool = new Pool($this->client, $request(), [
 			'concurrency' => $this->concurrency,
-			'fulfilled' => function (ResponseInterface $response, $index) {
-				$target = $this->pool[$index];
-				$last = $response->getHeader('Last-Modified');
-				if (!empty($last)) {
-					if ($this->timestamp->$target != null && $this->timestamp->$target == $last[0]) {
-						return;
-					}
-					$this->timestamp->$target = $last[0];
+			'fulfilled' => function (ResponseInterface $response, $source) {
+				$target = $this->pool[$source];
+
+				$lastModified = $this->getLastModified($response);
+				$isModified = $this->timestamp->isModified($source, $lastModified);
+
+				if (!$isModified) {
+					return;
 				}
-				$this->addRequest($index, $target);
+				$this->timestamp->save($source, $lastModified);
+
+				$this->addRequest($source, $target);
 			},
 			'rejected' => function ($reason, $index) {
 				$this->rejected[$index] = $reason;
@@ -143,12 +146,21 @@ class Downloader
 		$this->request();
 	}
 
+	private function getLastModified(ResponseInterface $response): ?DateTime
+	{
+		$arr = $response->getHeader('Last-Modified');
+		if (isset($arr[0])) {
+			return DateTime::createFromFormat('D, d M Y H:i:s O', $arr[0]);
+		}
+		return null;
+	}
+
 	/**
 	 * pridani adresy ke stazeni
 	 * @param string $source
 	 * @param string $target
 	 */
-	private function addRequest(string $source, string $target)
+	private function addRequest(string $source, string $target): void
 	{
 		$this->request[] = function () use ($source, $target) {
 			return $this->client->getAsync($source, [
@@ -161,7 +173,7 @@ class Downloader
 	/**
 	 * Stazeni z url
 	 */
-	private function request()
+	private function request(): void
 	{
 		$pool = new Pool($this->client, $this->request, [
 			'concurrency' => $this->concurrency,
@@ -178,7 +190,7 @@ class Downloader
 
 }
 
-interface IDownloader
+interface IDownloaderFactory
 {
 	public function create(): Downloader;
 }

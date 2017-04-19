@@ -2,6 +2,9 @@
 
 namespace NAttreid\Downloader;
 
+use DateTime;
+use Nette\IOException;
+
 /**
  * Trida pro indexaci data stazeni souboru
  *
@@ -9,50 +12,55 @@ namespace NAttreid\Downloader;
  */
 class IndexFile
 {
-
 	/** @var string */
 	private $file;
+
+	/** @var string[] */
+	private $timestamp;
 
 	public function __construct(string $indexFile)
 	{
 		$this->file = 'nette.safe://' . $indexFile;
 	}
 
-	private function readFile()
+	private function getTimestamp(): array
 	{
-		$data = @file_get_contents($this->file);
-		if (!$data) {
-			$timestamp = [];
-		} else {
-			$timestamp = unserialize($data);
-			if (!is_array($timestamp)) {
-				throw new \Nette\IOException("Cannot parse file '{$this->file}'");
+		if ($this->timestamp === null) {
+			$data = @file_get_contents($this->file);
+			if ($data) {
+				$this->timestamp = unserialize($data);
+				if (!is_array($this->timestamp)) {
+					throw new IOException("Cannot parse file '{$this->file}'");
+				}
+			} else {
+				$this->timestamp = [];
 			}
 		}
-		return $timestamp;
+		return $this->timestamp;
 	}
 
-	public function __get(string $name)
+	public function isModified(string $name, ?DateTime $timestamp): bool
 	{
-		$timestamp = $this->readFile();
-		if (isset($timestamp[$name])) {
-			return $timestamp[$name];
+		$data = $this->getTimestamp();
+		if (isset($data[$name])) {
+			return $data[$name] != $timestamp;
 		} else {
-			return null;
+			return true;
 		}
 	}
 
-	public function __set(string $name, string $value)
+	public function save(string $name, DateTime $timestamp): void
 	{
-		$timestamp = $this->readFile();
-		$timestamp[$name] = $value;
+		$data = $this->getTimestamp();
+		$data[$name] = $timestamp;
 		$counter = 0;
-		while (!file_put_contents($this->file, serialize($timestamp))) {
+		while (!file_put_contents($this->file, serialize($data))) {
 			sleep(1);
 			if ($counter++ == 10) {
-				throw new \Nette\IOException("Cannot write to file '{$this->file}'");
+				throw new IOException("Cannot write to file '{$this->file}'");
 			}
 		}
+		$this->timestamp = null;
 	}
 
 }

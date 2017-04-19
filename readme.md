@@ -8,7 +8,7 @@ extensions:
 
 ## Použití
 ```php
-/** @var \NAttreid\Downloader\IDownloader */
+/** @var \NAttreid\Downloader\IDownloaderFactory */
 private $downloaderFactory;
 
 function download() {
