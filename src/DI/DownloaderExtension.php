@@ -31,7 +31,7 @@ class DownloaderExtension extends CompilerExtension
 		$config['temp'] = Helpers::expand($config['temp'], $builder->parameters);
 
 		$builder->addDefinition($this->prefix('downloader.index'))
-			->setClass(IndexFile::class)
+			->setType(IndexFile::class)
 			->setArguments([$config['temp']]);
 
 		$builder->addDefinition($this->prefix('downloader.downloader'))
